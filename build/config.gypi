@@ -504,7 +504,7 @@
     "prefix": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm",
     "npm_version": "10.2.5",
     "node_gyp": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
-    "local_prefix": "C:\\Users\\shiyakami\\widget-core",
+    "local_prefix": "C:\\Users\\shiyakami\\widget-core-windows",
     "init_module": "C:\\Users\\shiyakami\\.npm-init.js",
     "global_prefix": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm",
     "globalconfig": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm\\etc\\npmrc",

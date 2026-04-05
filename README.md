@@ -53,7 +53,7 @@ Security is a primary concern for widgets. **WidgetCore** implements a multi-lay
 You can create complex, self-contained widgets using a single string:
 
 ```typescript
-import { DesktopWidget } from 'widget-core';
+import { DesktopWidget } from 'widget-core-windows';
 
 const clockHTML = `
   <div id="clock" style="font-size: 48px; font-weight: bold; color: #60A5FA; font-family: sans-serif; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">00:00:00</div>
@@ -154,7 +154,7 @@ npm test
 
 - **Widget background is white on Linux**: Ensure your compositor supports transparency. We use ARGB visual for the GTK window.
 - **Keyboard input not working**: Set `interactive: true` in the options.
-- **Widget doesn't appear after restart**: Check if the registry file `~/.config/widget-core/widgets.json` exists and the autostart entry is correct.
+- **Widget doesn't appear after restart**: Check if the registry file `~/.config/widget-core-windows/widgets.json` exists and the autostart entry is correct.
 
 ---
 

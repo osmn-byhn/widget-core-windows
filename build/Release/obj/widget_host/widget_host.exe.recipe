@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\shiyakami\widget-core\build\Release\widget_host.exe</FullPath>
+      <FullPath>C:\Users\shiyakami\widget-core-windows\build\Release\widget_host.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
