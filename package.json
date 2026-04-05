@@ -1,7 +1,7 @@
 {
   "name": "@osmn-byhn/widget-core-windows",
   "version": "1.0.0",
-  "description": "Cross-platform desktop widget manager library.",
+  "description": "Windows desktop widget manager library.",
   "author": "Osman Beyhan",
   "license": "MIT",
   "repository": {
