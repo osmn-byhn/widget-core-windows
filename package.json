@@ -1,7 +1,7 @@
 {
   "name": "@osmn-byhn/widget-core-windows",
   "version": "1.0.0",
-  "description": "Windows desktop widget manager library.",
+  "description": "Windows-only desktop widget manager library.",
   "author": "Osman Beyhan",
   "license": "MIT",
   "repository": {
@@ -24,9 +24,9 @@
   "keywords": [
     "widget",
     "desktop",
-    "cross-platform",
     "gui",
-    "webkit",
+    "win32",
+    "webView2",
     "electron-alternative"
   ],
   "files": [

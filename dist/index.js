@@ -53,8 +53,7 @@ export class DesktopWidget {
         }
     }
     spawnNativeHost(url, options) {
-        const isWin = process.platform === 'win32';
-        const hostName = isWin ? 'widget_host.exe' : 'widget_host';
+        const hostName = 'widget_host.exe';
         // Look in build/Release
         const hostPath = path.resolve(__dirname, '..', 'build', 'Release', hostName);
         if (!fs.existsSync(hostPath)) {
@@ -233,12 +232,7 @@ export class DesktopWidget {
     static killAllProcesses() {
         const { execSync } = createRequire(import.meta.url)("child_process");
         try {
-            if (process.platform === 'win32') {
-                execSync(`wmic process where "CommandLine like '%runner.js%'" delete`);
-            }
-            else {
-                execSync(`pkill -f "runner.js"`);
-            }
+            execSync(`wmic process where "CommandLine like '%runner.js%'" delete`);
             return true;
         }
         catch (e) {
@@ -248,15 +242,10 @@ export class DesktopWidget {
     static killProcess(id) {
         const { execSync } = createRequire(import.meta.url)("child_process");
         try {
-            if (process.platform === 'win32') {
-                try {
-                    execSync(`wmic process where "CommandLine like '%runner.js %${id}%'" delete`);
-                }
-                catch (e) { }
+            try {
+                execSync(`wmic process where "CommandLine like '%runner.js %${id}%'" delete`);
             }
-            else {
-                execSync(`pkill -f "runner.js ${id}"`);
-            }
+            catch (e) { }
             return true;
         }
         catch (e) {

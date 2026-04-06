@@ -1,12 +1,12 @@
-# WidgetCore 🚀
+# WidgetCore 🚀 (Windows-only)
 
-**WidgetCore** is a high-performance, cross-platform library built with Node.js and C++ for creating interactive and persistent desktop widgets. It leverages native OS webview engines (**WebView2** on Windows, **WKWebView** on macOS, and **WebKitGTK** on Linux) to provide a seamless, lightweight, and hardware-accelerated widget experience.
+**WidgetCore** is a high-performance Windows library built with Node.js and C++ for creating interactive and persistent desktop widgets. It leverages the native **WebView2** engine on Windows to provide a seamless, lightweight, and hardware-accelerated widget experience.
 
 ---
 
 ## 🏗️ Architecture Overview
 
-WidgetCore uses a hybrid architecture where the core logic is managed in Node.js, while windowing and webview rendering are handled by a native C++ module (`widget_core.node`).
+WidgetCore uses a hybrid architecture where the core logic is managed in Node.js, while windowing and webview rendering are handled by a native C++ module (`widget_shield_native.node`).
 
 ```mermaid
 graph TD
@@ -14,13 +14,8 @@ graph TD
     B --> C[WidgetRegistry]
     B --> D[AutostartManager]
     B --> E[Native Module C++]
-    E --> F{Platform}
-    F -->|Linux| G[WebKitGTK + GTK3]
-    F -->|macOS| H[WKWebView + Cocoa]
-    F -->|Windows| I[WebView2 + Win32]
-    G --> J[Desktop Widget Window]
-    H --> J
-    I --> J
+    E --> F[WebView2 + Win32]
+    F --> G[Desktop Widget Window]
 ```
 
 ---
@@ -28,10 +23,10 @@ graph TD
 ## ✨ Core Capabilities
 
 - **🚀 HTML/JS Power**: Build widgets using any web technology. No restricted environments.
-- **🖼️ Native Transparency**: Aggressive transparency settings ensure widgets blend perfectly with wallpapers.
-- **🖇️ System Integration**: Widgets are pinned below icons (on supported platforms) and removed from taskbars/app-switchers.
+- **🖼️ Native Transparency**: Aggressive transparency settings ensure widgets blend perfectly with Windows backgrounds.
+- **🖇️ System Integration**: Widgets are pinned to the desktop layer and removed from taskbars/app-switchers.
 - **🖱️ Full Interactivity**: Toggle `interactive: true` to allow mouse clicks and keyboard input directly on the desktop background.
-- **💾 Auto-Persistence**: Automatically saves widget state and ensures they reappear after system reboots.
+- **💾 Auto-Persistence**: Automatically saves widget state and ensures they reappear after system reboots via the Windows Registry.
 - **🧩 Scroll-Free Design**: Scrollbars are hidden by default via CSS injection, with optional overflow prevention.
 
 ---
@@ -53,7 +48,7 @@ Security is a primary concern for widgets. **WidgetCore** implements a multi-lay
 You can create complex, self-contained widgets using a single string:
 
 ```typescript
-import { DesktopWidget } from 'widget-core-windows';
+import { DesktopWidget } from '@osmn-byhn/widget-core-windows';
 
 const clockHTML = `
   <div id="clock" style="font-size: 48px; font-weight: bold; color: #60A5FA; font-family: sans-serif; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">00:00:00</div>
@@ -103,27 +98,13 @@ widgets.forEach(w => console.log(`ID: ${w.id}, URL: ${w.url}, Active: ${w.active
 | `interactive` | `boolean` | If `true`, clicks pass through to the widget. Default: `false`. |
 | `html` | `string` | Raw HTML/CSS source code to load. |
 | `scroll` | `boolean` | If `false`, `overflow: hidden` is applied. Default: `true`. |
-| `blur` | `boolean` | Platform-specific background blur effect. |
+| `blur` | `boolean` | Windows-specific background blur effect. |
 
 ### Instance Methods
 - **`makePersistent(options): Promise<boolean>`**: Saves to disk and enables autostart.
 - **`activate(): boolean`**: Enables autostart and launches the process.
 - **`deactivate(): boolean`**: Disables autostart and kills the process.
 - **`launchStandalone(): boolean`**: Spawns a background `runner.js` process for the widget.
-
----
-
-## 🐧 Linux Platform Notes (GTK/WebKit)
-On Linux, WidgetCore uses GTK and WebKitGTK. For full transparency, ensure your window manager/compositor (like Mutter on GNOME or KWin on KDE) is configured correctly.
-- **Dependencies**: `libwebkit2gtk-4.0-dev` or `libwebkit2gtk-4.1-dev`.
-- **Autostart**: Creates `.desktop` files in `~/.config/autostart/`.
-
----
-
-## 🍎 macOS Platform Notes (Cocoa/WKWebView)
-- **Engine**: WKWebView.
-- **Autostart**: Creates `.plist` files in `~/Library/LaunchAgents/`.
-- **Transparency**: Fully supported out-of-the-box.
 
 ---
 
@@ -152,11 +133,10 @@ npm test
 
 ## 🐛 Troubleshooting
 
-- **Widget background is white on Linux**: Ensure your compositor supports transparency. We use ARGB visual for the GTK window.
 - **Keyboard input not working**: Set `interactive: true` in the options.
-- **Widget doesn't appear after restart**: Check if the registry file `~/.config/widget-core-windows/widgets.json` exists and the autostart entry is correct.
+- **Widget doesn't appear after restart**: Check if the registry file `~/.config/widget-core-windows/widgets.json` exists and the autostart entry is correct in the Windows Registry.
 
 ---
 
 ## 📝 License
-MIT License. Copyright (c) 2026 Osman Beyhan. Contributions are welcome!
+MIT License. Copyright (c) 2026 Osman Beyhan.
