@@ -38,9 +38,10 @@ try {
     }, 4000);
 
     // Keep process alive indefinitely
-    setInterval(() => { }, 1000 * 60 * 60);
+    //setInterval(() => { }, 1000 * 60 * 60);
 
 } catch (error) {
     console.error('❌ Failed to launch widget:', error);
     process.exit(1);
 }
+

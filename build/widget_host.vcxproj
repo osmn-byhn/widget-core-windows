@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8B19466F-D923-A86D-1C13-6F44B776B5D0}</ProjectGuid>
+    <ProjectGuid>{0902A7B1-F8E3-4F51-91AD-A9780E645DD2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>widget_host</RootNamespace>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
-    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Label="Locals">
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
   <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props"/>
@@ -67,7 +67,7 @@
       <AdditionalOptions>/LTCG:INCREMENTAL %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <Link>
-      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;uuid.lib;odbc32.lib;delayimp.lib;&quot;C:\\Users\\shiyakami\\AppData\\Local\\node-gyp\\Cache\\24.14.1\\x64\\node.lib&quot;;dwmapi.lib;user32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;uuid.lib;odbc32.lib;DelayImp.lib;&quot;C:\\Users\\shiyakami\\AppData\\Local\\node-gyp\\Cache\\24.14.1\\x64\\node.lib&quot;;dwmapi.lib;user32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
       <AdditionalOptions>/LTCG:INCREMENTAL /ignore:4199 %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>node.exe;%(DelayLoadDLLs)</DelayLoadDLLs>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -112,7 +112,7 @@
       <AdditionalOptions>/LTCG:INCREMENTAL %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <Link>
-      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;uuid.lib;odbc32.lib;delayimp.lib;&quot;C:\\Users\\shiyakami\\AppData\\Local\\node-gyp\\Cache\\24.14.1\\x64\\node.lib&quot;;dwmapi.lib;user32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;uuid.lib;odbc32.lib;DelayImp.lib;&quot;C:\\Users\\shiyakami\\AppData\\Local\\node-gyp\\Cache\\24.14.1\\x64\\node.lib&quot;;dwmapi.lib;user32.lib;ole32.lib;oleaut32.lib</AdditionalDependencies>
       <AdditionalOptions>/LTCG:INCREMENTAL /ignore:4199 %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>node.exe;%(DelayLoadDLLs)</DelayLoadDLLs>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -138,7 +138,7 @@
     <ClCompile Include="..\native\win32\WidgetManager.cpp">
       <ObjectFileName>$(IntDir)\native\win32\WidgetManager.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="C:\Users\shiyakami\AppData\Local\npm-cache\_npx\c463d28440264a05\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
+    <ClCompile Include="C:\Users\shiyakami\AppData\Roaming\npm\node_modules\npm\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
   <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets"/>

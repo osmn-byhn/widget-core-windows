@@ -2,7 +2,7 @@
 {
   "variables": {
     "use_ccache_win": 0,
-    "clang": 0,
+    "clang": 1,
     "llvm_version": "19.1.5",
     "nasm_version": "3.01",
     "node_prefix": "\\usr\\local",
@@ -498,17 +498,17 @@
     "nodedir": "C:\\Users\\shiyakami\\AppData\\Local\\node-gyp\\Cache\\24.14.1",
     "python": "C:\\Python314\\python.exe",
     "standalone_static_library": 1,
-    "msbuild_path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-    "user_agent": "npm/10.2.5 node/v24.14.1 win32 x64 workspaces/false",
-    "userconfig": "C:\\Users\\shiyakami\\.npmrc",
-    "prefix": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm",
-    "npm_version": "10.2.5",
-    "node_gyp": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
-    "local_prefix": "C:\\Users\\shiyakami\\widget-core-windows",
-    "init_module": "C:\\Users\\shiyakami\\.npm-init.js",
-    "global_prefix": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm",
+    "msbuild_path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+    "cache": "C:\\Users\\shiyakami\\AppData\\Local\\npm-cache",
     "globalconfig": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm\\etc\\npmrc",
-    "cache": "C:\\Users\\shiyakami\\AppData\\Local\\npm-cache"
+    "global_prefix": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm",
+    "init_module": "C:\\Users\\shiyakami\\.npm-init.js",
+    "local_prefix": "C:\\Users\\shiyakami\\Desktop\\widget-core-windows",
+    "node_gyp": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
+    "npm_version": "10.2.5",
+    "prefix": "C:\\Users\\shiyakami\\AppData\\Roaming\\npm",
+    "userconfig": "C:\\Users\\shiyakami\\.npmrc",
+    "user_agent": "npm/10.2.5 node/v24.14.1 win32 x64 workspaces/false"
   },
   "target_defaults": {
     "include_dirs": [],
@@ -526,7 +526,7 @@
         "v8_enable_v8_checks": 0
       }
     },
-    "msbuild_toolset": "v145",
-    "msvs_windows_target_platform_version": "10.0.26100.0"
+    "msbuild_toolset": "v142",
+    "msvs_windows_target_platform_version": "10.0.19041.0"
   }
 }
