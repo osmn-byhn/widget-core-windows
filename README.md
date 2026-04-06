@@ -1,140 +1,125 @@
-# WidgetCore 🚀 (Windows-only)
+# WidgetCore 🚀 (Windows Optimized)
 
-**WidgetCore** is a high-performance Windows library built with Node.js and C++ for creating interactive and persistent desktop widgets. It leverages the native **WebView2** engine on Windows to provide a seamless, lightweight, and hardware-accelerated widget experience.
+**WidgetCore** is a high-performance, Windows-optimized library built with Node.js and C++ for creating interactive and persistent desktop widgets. By leveraging the native **Win32 API** and **WebView2**, WidgetCore provides a lightweight, hardware-accelerated experience that feels like a natural part of the Windows desktop.
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗️ Architecture: The Node-Native Bridge
 
-WidgetCore uses a hybrid architecture where the core logic is managed in Node.js, while windowing and webview rendering are handled by a native C++ module (`widget_shield_native.node`).
+WidgetCore uses a sophisticated hybrid architecture to combine the rapid development of web technologies with the power of native system APIs.
+
+### 1. The Win32 Message Loop
+Unlike standard Node.js applications that run on a single thread, WidgetCore spawns a **dedicated, detached Win32 thread** for each widget. This ensures that:
+-   The Node.js event loop remains unblocked.
+-   Window messages (resizing, clicking, painting) are handled with sub-millisecond latency.
+-   The widget remains responsive even if the main Node.js process is busy with heavy computations.
+
+### 2. OLE/COM Browser Hosting
+WidgetCore embeds the **Microsoft WebView2** engine (Edge/Chromium) using the `IWebBrowser2` interface (via OLE). This provides:
+-   Full HTML5/CSS3/ES6 support.
+-   Hardware-accelerated rendering.
+-   Low memory footprint compared to full Electron shells.
 
 ```mermaid
 graph TD
-    A[Node.js App] --> B[DesktopWidget Class]
-    B --> C[WidgetRegistry]
-    B --> D[AutostartManager]
-    B --> E[Native Module C++]
-    E --> F[WebView2 + Win32]
-    F --> G[Desktop Widget Window]
+    A[Node.js Logic] -- Node-API (C++) --> B[WidgetManager]
+    B -- std::thread --> C[Detached Message Loop]
+    C -- Win32 API --> D[WS_EX_LAYERED Window]
+    D -- OLE/COM --> E[WebView2 Engine]
+    E --> F[Example: Cyber-Glow Widget]
 ```
 
 ---
 
-## ✨ Core Capabilities
+## ✨ The "Cyber-Glow" Mode (Native Features)
 
-- **🚀 HTML/JS Power**: Build widgets using any web technology. No restricted environments.
-- **🖼️ Native Transparency**: Aggressive transparency settings ensure widgets blend perfectly with Windows backgrounds.
-- **🖇️ System Integration**: Widgets are pinned to the desktop layer and removed from taskbars/app-switchers.
-- **🖱️ Full Interactivity**: Toggle `interactive: true` to allow mouse clicks and keyboard input directly on the desktop background.
-- **💾 Auto-Persistence**: Automatically saves widget state and ensures they reappear after system reboots via the Windows Registry.
-- **🧩 Scroll-Free Design**: Scrollbars are hidden by default via CSS injection, with optional overflow prevention.
+WidgetCore is designed for high-end desktop aesthetics. It implements several advanced Win32 techniques:
+
+### 🖼️ Aggressive Transparency
+Using `WS_EX_LAYERED` and `LWA_COLORKEY`, WidgetCore achieves true transparency. The native layer uses a specific color key (`RGB(1, 1, 1)`) as the transparency mask, allowing for:
+-   Non-rectangular widget shapes.
+-   Anti-aliased "glow" effects that blend into the wallpaper.
+-   No ugly borders or standard window decorations.
+
+### 🌌 DWM Blur Behind
+By interfacing with `dwmapi.dll`, WidgetCore can enable the **Aero Glass / Acrylic** effect behind your widget.
+-   **Config**: Set `blur: true` in `WidgetOptions`.
+-   **Effect**: The background of your widget will have a beautiful, frosted-glass blur that interacts with the wallpaper.
+
+### 🖱️ Click-Through Interactivity
+You can control how the widget interacts with the mouse:
+-   **Interactive (`true`)**: The widget behaves like a normal window (receives clicks).
+-   **Click-Through (`false`)**: Mouse events pass directly through the widget to the desktop icons or other windows behind it.
 
 ---
 
-## 🔒 Security Shield
+## 🔒 Security Shield Architecture
 
-Security is a primary concern for widgets. **WidgetCore** implements a multi-layer "Shield" to protect the host system:
+Security is baked into the core. Every widget is wrapped in a multi-stage **Security Shield**:
 
-1. **API Isolation**: Injects a preload script that freezes `process`, `require`, and other sensitive Node.js globals.
-2. **Context Separation**: The webview runs in a sandboxed environment where it cannot access the local filesystem or execute shell commands directly.
-3. **Protocol Filtering**: Only `http:`, `https:`, and valid `file:` protocols are allowed for loading content.
-4. **Keyword Blocking**: Input data and URLs are scanned for dangerous keywords like `shell`, `eval`, or `exec`.
+1.  **Context Isolation**: Injected CSS and JS freeze the environment. Standard Node.js entry points (`process`, `require`) are purged before the widget content loads.
+2.  **Protocol Filtering**: Only `http:`, `https:`, and strictly validated `file:///` protocols are permitted. This prevent `javascript:` or `data:` URL exploits.
+3.  **Keyword Scanning**: All input triggers (URLs and HTML blobs) are scanned for high-risk system keywords (`shell`, `exec`, `eval`, `process`).
 
 ---
 
-## 🚀 Detailed Usage
+## 💾 Persistence & Standalone Execution
 
-### Advanced HTML Widget Example
-You can create complex, self-contained widgets using a single string:
+WidgetCore widgets can survive system reboots and process crashes.
 
+### 1. The Registry Lifecycle
+The `AutostartManager` interfaces with the Windows Registry:
+`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
+It creates a unique entry for each persistent widget that triggers a `runner.js` script on login.
+
+### 2. Standalone Runner
+The `runner.js` is a lightweight entry point that reconstructs a widget instance from the `widgets.json` registry file without requiring the primary application to be running.
+
+---
+
+## 🚀 Getting Started
+
+### Installation
+```bash
+npm install @osmn-byhn/widget-core-windows
+```
+*Note: Requires Visual Studio Build Tools and Node-GYP for native compilation.*
+
+### Basic Usage
 ```typescript
 import { DesktopWidget } from '@osmn-byhn/widget-core-windows';
 
-const clockHTML = `
-  <div id="clock" style="font-size: 48px; font-weight: bold; color: #60A5FA; font-family: sans-serif; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">00:00:00</div>
-  <script>
-    setInterval(() => {
-      document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    }, 1000);
-  </script>
-`;
-
-const widget = new DesktopWidget("", {
-  html: clockHTML,
-  width: 300,
-  height: 100,
-  x: 50,
-  y: 50,
-  scroll: false,
-  interactive: false // Clocks usually don't need input
+const widget = new DesktopWidget("https://my-widget-dashboard.com", {
+  width: 350,
+  height: 500,
+  x: 100,
+  y: 100,
+  opacity: 0.9,
+  blur: true,      // Glass effect
+  sticky: true     // Stays on bottom
 });
-
-// Make it stay after reboot
-await widget.makePersistent(widget.options);
-```
-
-### Static Global Management
-```typescript
-// Stop all running widgets across the system
-const stopped = DesktopWidget.stopAll();
-
-// Get list of all registered widgets
-const widgets = DesktopWidget.listWidgets();
-widgets.forEach(w => console.log(`ID: ${w.id}, URL: ${w.url}, Active: ${w.active}`));
 ```
 
 ---
 
-## 🛠️ API Documentation
+## 🛠️ API Reference
 
 ### `WidgetOptions`
-| Property | Type | Description |
-| :--- | :--- | :--- |
-| `width` | `number` | Width in pixels. |
-| `height` | `number` | Height in pixels. |
-| `x` | `number` | X coordinate from top-left. |
-| `y` | `number` | Y coordinate from top-left. |
-| `opacity` | `number` | Window opacity (0.0 to 1.0). Default: `1.0`. |
-| `interactive` | `boolean` | If `true`, clicks pass through to the widget. Default: `false`. |
-| `html` | `string` | Raw HTML/CSS source code to load. |
-| `scroll` | `boolean` | If `false`, `overflow: hidden` is applied. Default: `true`. |
-| `blur` | `boolean` | Windows-specific background blur effect. |
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `width` / `height` | `number` | `400` | Dimensions in pixels. |
+| `x` / `y` | `number` | `100` | Screen coordinates (0,0 is top-left). |
+| `opacity` | `number` | `1.0` | Global alpha (0.0 - 1.0). |
+| `blur` | `boolean` | `false` | Enables DWM Blur Behind (Acrylic look). |
+| `sticky` | `boolean` | `true` | Pins the widget to the bottom layer (desktop). |
+| `interactive` | `boolean` | `true` | Set to `false` for click-through mode. |
+| `html` | `string` | `""` | Direct HTML string if no URL is provided. |
 
-### Instance Methods
-- **`makePersistent(options): Promise<boolean>`**: Saves to disk and enables autostart.
-- **`activate(): boolean`**: Enables autostart and launches the process.
-- **`deactivate(): boolean`**: Disables autostart and kills the process.
-- **`launchStandalone(): boolean`**: Spawns a background `runner.js` process for the widget.
-
----
-
-## 💻 Windows Platform Notes (Win32/WebView2)
-- **Engine**: WebView2 (Evergreen Runtime required).
-- **Autostart**: Uses the `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` registry key.
-
----
-
-## 🧪 Development & Testing
-
-We use **Vitest** for unit testing. The native layer is mocked automatically during tests.
-
-```bash
-# Install dependencies
-npm install
-
-# Build native module & TypeScript
-npm run build
-
-# Run tests
-npm test
-```
-
----
-
-## 🐛 Troubleshooting
-
-- **Keyboard input not working**: Set `interactive: true` in the options.
-- **Widget doesn't appear after restart**: Check if the registry file `~/.config/widget-core-windows/widgets.json` exists and the autostart entry is correct in the Windows Registry.
+### `DesktopWidget` Methods
+-   `setPosition(x, y)`: Real-time window movement.
+-   `setOpacity(value)`: Smooth alpha transitions.
+-   `makePersistent(options)`: Registers the widget for autostart.
+-   `static stopAll()`: Kills all running widget processes across the system.
 
 ---
 
