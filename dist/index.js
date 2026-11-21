@@ -1,7 +1,7 @@
 import { createRequire } from "module";
 import { spawn } from "child_process";
-import path from "path";
 import fs from "fs";
+import path from "path";
 import { fileURLToPath } from "url";
 import { WidgetRegistry } from "./registry.js";
 import { AutostartManager } from "./autostart.js";
@@ -51,11 +51,44 @@ export class DesktopWidget {
         this.applySecurityShield(options);
         // Native tarafında pencereyi oluştur
         try {
-            this.nativeHandle = native.createWidget(url, options);
+            if (options.detached) {
+                this.spawnNativeHost(url, options);
+            }
+            else {
+                this.nativeHandle = native.createWidget(url, options);
+            }
         }
         catch (e) {
             console.error("Failed to create native widget:", e);
         }
+    }
+    spawnNativeHost(url, options) {
+        const hostName = 'widget_host.exe';
+        // Look in build/Release
+        const hostPath = path.resolve(__dirname, '..', 'build', 'Release', hostName);
+        if (!fs.existsSync(hostPath)) {
+            console.warn(`Native host not found at ${hostPath}. Falling back to in-process widget.`);
+            this.nativeHandle = native.createWidget(url, options);
+            return;
+        }
+        const args = [
+            `--url=${url}`,
+            `--width=${options.width}`,
+            `--height=${options.height}`,
+            `--x=${options.x}`,
+            `--y=${options.y}`,
+            `--opacity=${options.opacity ?? 1.0}`,
+            `--blur=${options.blur ? 'true' : 'false'}`,
+            `--sticky=${options.sticky !== false ? 'true' : 'false'}`,
+            `--interactive=${options.interactive !== false ? 'true' : 'false'}`,
+            `--scroll=${options.scroll !== false ? 'true' : 'false'}`
+        ];
+        console.log(`[DesktopWidget] Spawning detached native host: ${hostName}`);
+        const child = spawn(hostPath, args, {
+            detached: true,
+            stdio: 'ignore'
+        });
+        child.unref();
     }
     setOpacity(value) {
         if (value < 0 || value > 1)
@@ -209,12 +242,7 @@ export class DesktopWidget {
     static killAllProcesses() {
         const { execSync } = createRequire(import.meta.url)("child_process");
         try {
-            if (process.platform === 'win32') {
-                execSync(`wmic process where "CommandLine like '%runner.js%'" delete`);
-            }
-            else {
-                execSync(`pkill -f "runner.js"`);
-            }
+            execSync(`wmic process where "CommandLine like '%runner.js%'" delete`);
             return true;
         }
         catch (e) {
@@ -224,15 +252,10 @@ export class DesktopWidget {
     static killProcess(id) {
         const { execSync } = createRequire(import.meta.url)("child_process");
         try {
-            if (process.platform === 'win32') {
-                try {
-                    execSync(`wmic process where "CommandLine like '%runner.js %${id}%'" delete`);
-                }
-                catch (e) { }
+            try {
+                execSync(`wmic process where "CommandLine like '%runner.js %${id}%'" delete`);
             }
-            else {
-                execSync(`pkill -f "runner.js ${id}"`);
-            }
+            catch (e) { }
             return true;
         }
         catch (e) {

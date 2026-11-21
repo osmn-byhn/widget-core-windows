@@ -1,85 +1,25 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
 import { execSync } from 'child_process';
 export class AutostartManager {
-    platform;
     constructor() {
-        this.platform = process.platform;
-        this.ensureDir();
-    }
-    ensureDir() {
-        if (this.platform === 'linux') {
-            const dir = path.join(os.homedir(), '.config', 'autostart');
-            if (!fs.existsSync(dir))
-                fs.mkdirSync(dir, { recursive: true });
-        }
-        else if (this.platform === 'darwin') {
-            const dir = path.join(os.homedir(), 'Library', 'LaunchAgents');
-            if (!fs.existsSync(dir))
-                fs.mkdirSync(dir, { recursive: true });
+        if (process.platform !== 'win32') {
+            console.warn("AutostartManager is only supported on Windows.");
         }
     }
-    enable(id, name, command) {
-        try {
-            if (this.platform === 'linux') {
-                return this.enableLinux(id, name, command);
-            }
-            else if (this.platform === 'win32') {
-                return this.enableWindows(id, command);
-            }
-            else if (this.platform === 'darwin') {
-                return this.enableMacOS(id, name, command);
-            }
+    enable(id, _name, command) {
+        if (process.platform !== 'win32')
             return false;
+        try {
+            return this.enableWindows(id, command);
         }
         catch (e) {
             return false;
         }
     }
     disable(id) {
-        try {
-            if (this.platform === 'linux') {
-                return this.disableLinux(id);
-            }
-            else if (this.platform === 'win32') {
-                return this.disableWindows(id);
-            }
-            else if (this.platform === 'darwin') {
-                return this.disableMacOS(id);
-            }
+        if (process.platform !== 'win32')
             return false;
-        }
-        catch (e) {
-            return false;
-        }
-    }
-    enableLinux(id, name, command) {
         try {
-            const dir = path.join(os.homedir(), '.config', 'autostart');
-            const file = path.join(dir, `widget-${id}.desktop`);
-            const content = `[Desktop Entry]
-Type=Application
-Name=Desktop Widget - ${name}
-Exec=${command}
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Comment=Auto-started desktop widget
-`;
-            fs.writeFileSync(file, content);
-            return true;
-        }
-        catch (e) {
-            return false;
-        }
-    }
-    disableLinux(id) {
-        try {
-            const file = path.join(os.homedir(), '.config', 'autostart', `widget-${id}.desktop`);
-            if (fs.existsSync(file))
-                fs.unlinkSync(file);
-            return true;
+            return this.disableWindows(id);
         }
         catch (e) {
             return false;
@@ -109,44 +49,6 @@ Comment=Auto-started desktop widget
         catch (e) {
             // Might not exist, which is fine
             return true;
-        }
-    }
-    enableMacOS(id, name, command) {
-        try {
-            const dir = path.join(os.homedir(), 'Library', 'LaunchAgents');
-            const file = path.join(dir, `com.widget.${id}.plist`);
-            const content = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.widget.${id}</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>sh</string>
-        <string>-c</string>
-        <string>${command}</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-</dict>
-</plist>`;
-            fs.writeFileSync(file, content);
-            return true;
-        }
-        catch (e) {
-            return false;
-        }
-    }
-    disableMacOS(id) {
-        try {
-            const file = path.join(os.homedir(), 'Library', 'LaunchAgents', `com.widget.${id}.plist`);
-            if (fs.existsSync(file))
-                fs.unlinkSync(file);
-            return true;
-        }
-        catch (e) {
-            return false;
         }
     }
 }
