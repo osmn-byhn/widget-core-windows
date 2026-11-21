@@ -36,7 +36,21 @@ export interface WidgetOptions {
   html?: string;
   scroll?: boolean;
   permissions?: string[]; // e.g., ['network', 'disk-read']
+  configPath?: string;
+  css?: string;
+  js?: string;
+  keys?: Record<string, unknown>;
+  data?: Record<string, unknown>;
   detached?: boolean;
+}
+
+function readWidgetOptions(options: WidgetOptions): WidgetOptions {
+  if (!options.configPath) return options;
+  const config = JSON.parse(fs.readFileSync(path.resolve(options.configPath), "utf8")) as Partial<WidgetOptions>;
+  const css = options.css ?? config.css;
+  const js = options.js ?? config.js;
+  return { ...config, ...options, ...(css === undefined ? {} : { css }), ...(js === undefined ? {} : { js }),
+    keys: { ...config.keys, ...options.keys }, data: { ...config.data, ...options.data } };
 }
 
 export class DesktopWidget {
@@ -50,6 +64,7 @@ export class DesktopWidget {
     private url: string = "",
     options: WidgetOptions,
   ) {
+    options = readWidgetOptions(options);
     this.id = Math.random().toString(36).substring(2, 11);
     if (url) {
         this.validateURL(url);

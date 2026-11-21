@@ -104,6 +104,29 @@ const widget = new DesktopWidget("https://my-widget-dashboard.com", {
 
 ## 🛠️ API Reference
 
+### Per-widget JSON, CSS, JavaScript, and keys
+
+Create a JSON file for each widget and pass its path with `configPath`. CSS and JavaScript are injected into the document. `keys` and `data` are available as `window.widgetConfig.keys` and `window.widgetConfig.data`.
+
+```json
+{
+  "css": "body { color: white; background: transparent; }",
+  "js": "document.querySelector('#title').textContent = window.widgetConfig.keys.title;",
+  "keys": { "title": "Hello" },
+  "data": { "refreshMs": 5000 }
+}
+```
+
+```ts
+new DesktopWidget("file:///widgets/clock/index.html", {
+  width: 360, height: 180, x: 20, y: 20,
+  configPath: "C:/widgets/clock/widget.json"
+});
+```
+
+`window.widgetConfig` exposes widget-specific JSON values to the page. JavaScript support follows the browser engine available on the system.
+
+
 ### `WidgetOptions`
 | Property | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
@@ -114,6 +137,10 @@ const widget = new DesktopWidget("https://my-widget-dashboard.com", {
 | `sticky` | `boolean` | `true` | Pins the widget to the bottom layer (desktop). |
 | `interactive` | `boolean` | `true` | Set to `false` for click-through mode. |
 | `html` | `string` | `""` | Direct HTML string if no URL is provided. |
+| `configPath` | `string` | — | Path to a widget-specific JSON settings file. |
+| `css` / `js` | `string` | — | CSS and JavaScript source for the widget. |
+| `keys` / `data` | `object` | `{}` | Custom JSON values available through `window.widgetConfig`. |
+| `detached` | `boolean` | `false` | Runs the widget in the standalone native host. |
 
 ### `DesktopWidget` Methods
 -   `setPosition(x, y)`: Real-time window movement.
