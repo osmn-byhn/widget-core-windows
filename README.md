@@ -78,6 +78,28 @@ const widget = new DesktopWidget("", {
 await widget.makePersistent(widget.options);
 ```
 
+### Per-widget JSON, CSS, JavaScript, and keys
+
+Create a JSON file for each widget and pass its path with `configPath`. CSS and JavaScript are injected into the document. `keys` and `data` are available as `window.widgetConfig.keys` and `window.widgetConfig.data`.
+
+```json
+{
+  "css": "body { color: white; background: transparent; }",
+  "js": "document.querySelector('#title').textContent = window.widgetConfig.keys.title;",
+  "keys": { "title": "Hello" },
+  "data": { "refreshMs": 5000 }
+}
+```
+
+```ts
+new DesktopWidget("file:///widgets/clock/index.html", {
+  width: 360, height: 180, x: 20, y: 20,
+  configPath: "C:/widgets/clock/widget.json"
+});
+```
+
+JavaScript uses the web APIs supported by the platform's browser engine (DOM, fetch, timers, WebGL, and WebAudio where available).
+
 ### Static Global Management
 ```typescript
 // Stop all running widgets across the system
@@ -104,6 +126,9 @@ widgets.forEach(w => console.log(`ID: ${w.id}, URL: ${w.url}, Active: ${w.active
 | `html` | `string` | Raw HTML/CSS source code to load. |
 | `scroll` | `boolean` | If `false`, `overflow: hidden` is applied. Default: `true`. |
 | `blur` | `boolean` | Platform-specific background blur effect. |
+| `configPath` | `string` | Path to the widget's JSON settings file. |
+| `css` / `js` | `string` | CSS/JavaScript source injected into the document. |
+| `keys` / `data` | `object` | JSON values exposed on `window.widgetConfig`. |
 
 ### Instance Methods
 - **`makePersistent(options): Promise<boolean>`**: Saves to disk and enables autostart.

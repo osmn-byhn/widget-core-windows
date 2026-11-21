@@ -10,6 +10,11 @@ export interface WidgetOptions {
     html?: string;
     scroll?: boolean;
     permissions?: string[];
+    configPath?: string;
+    css?: string;
+    js?: string;
+    keys?: Record<string, unknown>;
+    data?: Record<string, unknown>;
 }
 export declare class DesktopWidget {
     private url;

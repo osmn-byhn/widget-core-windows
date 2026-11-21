@@ -120,6 +120,20 @@ gboolean create_widget_idle(gpointer data) {
     if (visual) gtk_widget_set_visual(window, visual);
 
     GtkWidget* webview = webkit_web_view_new();
+    WebKitSettings* settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webview));
+    webkit_settings_set_enable_javascript(settings, TRUE);
+    WebKitUserContentManager* ucm = webkit_web_view_get_user_content_manager(WEBKIT_WEB_VIEW(webview));
+    if (!task->options->css.empty()) {
+        WebKitUserStyleSheet* sheet = webkit_user_style_sheet_new(task->options->css.c_str(), WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
+        webkit_user_content_manager_add_style_sheet(ucm, sheet);
+        webkit_user_style_sheet_unref(sheet);
+    }
+    if (!task->options->js.empty() || !task->options->config.empty()) {
+        std::string source = "window.widgetConfig = " + (task->options->config.empty() ? std::string("{}") : task->options->config) + ";\n" + task->options->js;
+        WebKitUserScript* script = webkit_user_script_new(source.c_str(), WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START, NULL, NULL);
+        webkit_user_content_manager_add_script(ucm, script);
+        webkit_user_script_unref(script);
+    }
     gtk_container_add(GTK_CONTAINER(window), webview);
     
     if (!task->options->html.empty()) {
@@ -167,7 +181,12 @@ gboolean create_widget_idle(gpointer data) {
     webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(webview), &rgba);
     
     // Explicitly set window background to transparent too
-    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &rgba);
+    GtkCssProvider *provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(provider, "window { background-color: transparent; }", -1, NULL);
+    gtk_style_context_add_provider(gtk_widget_get_style_context(window),
+                                   GTK_STYLE_PROVIDER(provider),
+                                   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    g_object_unref(provider);
 
     gtk_widget_show_all(window);
 

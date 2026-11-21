@@ -37,6 +37,20 @@ void* WidgetManager::CreateWidget(const std::string& url, const WidgetOptions& o
     WKWebViewConfiguration* config = [[WKWebViewConfiguration alloc] init];
     // Security Shield: Sandbox settings
     [[config preferences] setJavaScriptEnabled:YES];
+
+    if (!options.css.empty()) {
+        NSString* css = [NSString stringWithUTF8String:options.css.c_str()];
+        NSString* cssSource = [NSString stringWithFormat:@"var s=document.createElement('style');s.textContent=%@;document.documentElement.appendChild(s);",
+            [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:@[css] options:0 error:nil] encoding:NSUTF8StringEncoding]];
+        WKUserScript* cssScript = [[WKUserScript alloc] initWithSource:cssSource injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:NO];
+        [[config userContentController] addUserScript:cssScript];
+    }
+    if (!options.js.empty() || !options.config.empty()) {
+        std::string source = "window.widgetConfig = " + (options.config.empty() ? std::string("{}") : options.config) + ";\n" + options.js;
+        WKUserScript* widgetScript = [[WKUserScript alloc] initWithSource:[NSString stringWithUTF8String:source.c_str()]
+            injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
+        [[config userContentController] addUserScript:widgetScript];
+    }
     
     // Inject CSS to hide scrollbars and handle overflow
     std::string scroll_css = "var style = document.createElement('style');"
